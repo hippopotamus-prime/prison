@@ -1,0 +1,42 @@
+# Project: pris-ed
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = pris-ed_private.res
+OBJ  = main.o handlers.o file.o board.o $(RES)
+LINKOBJ  = main.o handlers.o file.o board.o $(RES)
+LIBS =  -L"lib" -mwindows -lcomctl32  -s 
+INCS =  -I"include" 
+CXXINCS =  -I"lib/gcc/mingw32/3.4.2/include"  -I"include/c++/3.4.2/backward"  -I"include/c++/3.4.2/mingw32"  -I"include/c++/3.4.2/ext"  -I"include/c++/3.4.2"  -I"include" 
+BIN  = pris-ed.exe
+CXXFLAGS = $(CXXINCS)   -fexpensive-optimizations -O3
+CFLAGS = $(INCS)   -fexpensive-optimizations -O3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before pris-ed.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "pris-ed.exe" $(LIBS)
+
+main.o: main.c main.h resource.h handlers.h file.h board.h
+	$(CC) -c main.c -o main.o $(CFLAGS)
+
+handlers.o: handlers.c handlers.h main.h board.h resource.h
+	$(CC) -c handlers.c -o handlers.o $(CFLAGS)
+
+file.o: file.c file.h board.h main.h resource.h handlers.h
+	$(CC) -c file.c -o file.o $(CFLAGS)
+
+board.o: board.c board.h main.h resource.h
+	$(CC) -c board.c -o board.o $(CFLAGS)
+
+pris-ed_private.res: pris-ed_private.rc resource.rc 
+	$(WINDRES) -i pris-ed_private.rc --input-format=rc -o pris-ed_private.res -O coff 

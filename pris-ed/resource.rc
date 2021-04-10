@@ -1,0 +1,129 @@
+/****************************************************************************
+** Pris-Ed, The Prison Editor
+** Copyright 2004 Aaron Curtis
+** 
+** This file is part of The Prison.
+** 
+** Pris-Ed is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** Pris-Ed is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with Pris-Ed; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+****************************************************************************/
+
+#include <windows.h>
+#include "resource.h"
+
+idi_main ICON "pris-ed_icon16.ico"
+
+idr_mainmenu MENU
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&New", id_file_new
+		MENUITEM "&Open...", id_file_open
+		MENUITEM "&Reopen", id_file_reopen
+		MENUITEM "&Save", id_file_save
+		MENUITEM "Save &As...", id_file_saveas
+		MENUITEM "&Export...", id_file_export
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit", id_file_quit
+	END
+
+	POPUP "&Board"
+	BEGIN
+		MENUITEM "Next \t->", id_board_next, GRAYED
+		MENUITEM "Prev \t<-", id_board_prev, GRAYED
+		MENUITEM SEPARATOR
+		MENUITEM "Insert Before \tF1", id_board_insert
+		MENUITEM "Insert After \tF2", id_board_append
+		MENUITEM "Delete \tF3", id_board_delete
+        MENUITEM SEPARATOR
+        MENUITEM "Insert File Before \tF5", id_board_insert_file
+        MENUITEM "Insert File After \tF6", id_board_append_file
+		MENUITEM SEPARATOR
+		MENUITEM "Flags... \tF12", id_board_flags
+	END
+
+	POPUP "&Zoom"
+	BEGIN
+		MENUITEM "More \t+", id_zoom_more
+		MENUITEM "Less \t-", id_zoom_less
+		MENUITEM SEPARATOR
+		MENUITEM "100%", id_zoom_100
+		MENUITEM "125%", id_zoom_125
+		MENUITEM "150%", id_zoom_150
+		MENUITEM "175%", id_zoom_175
+		MENUITEM "200%", id_zoom_200
+		MENUITEM "225%", id_zoom_225
+		MENUITEM "250%", id_zoom_250
+		MENUITEM "275%", id_zoom_275
+		MENUITEM "300%", id_zoom_300
+	END
+
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&About...", id_help_about
+	END
+END
+
+idd_flags DIALOGEX 0, 0, 85, 110
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Bonus Flags"
+BEGIN
+    AUTOCHECKBOX    "50 Points", idcb_50point, 5, 5, 40, 10
+    AUTOCHECKBOX    "Decelerate", idcb_decel, 5, 15, 76, 10
+    AUTOCHECKBOX    "Clone", idcb_clone, 5, 25, 67, 10
+    AUTOCHECKBOX    "Permeate", idcb_through, 5, 35, 48, 10
+    AUTOCHECKBOX    "Enlarge Paddle", idcb_enlarge, 5, 45, 70, 10
+    AUTOCHECKBOX    "Extra Life", idcb_extralife, 5, 55, 62, 10
+    AUTOCHECKBOX    "Extra Points", idcb_extrapoint, 5, 65, 60, 10
+    AUTOCHECKBOX    "Detonate", idcb_charge, 5, 75, 56, 10
+    PUSHBUTTON      "&OK", IDOK, 5, 90, 35, 15
+	PUSHBUTTON		"&Cancel", IDCANCEL, 45, 90, 35, 15
+END
+
+idd_pdbname DIALOGEX 30, 30, 100, 40
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Internal PDB Name?"
+BEGIN
+	EDITTEXT		ide_pdbname, 5, 5, 90, 10
+	PUSHBUTTON		"&OK", IDOK, 30, 20, 40, 15
+END
+
+idd_about DIALOGEX DISCARDABLE 0, 0, 200, 125
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "About Pris-Ed"
+BEGIN
+	DEFPUSHBUTTON "&OK", IDOK, 50, 100, 100, 16
+	GROUPBOX "Pris-Ed - The Prison Editor", -1, 5, 5, 190, 85
+	CTEXT "Create boards for The Prison for PalmOS devices.\r\n\r\n" \
+		"Send comments to Aaron Curtis:\r\n" \
+		"aaron@mobilegamelab.com\r\n\r\n" \
+		"For more information, visit:\r\n" \
+		"www.mobilegamelab.com",
+		-1, 10, 20, 180, 60
+END
+
+idb_brick_plain BITMAP "../prison/gfx/brick_plain.bmp"
+idb_brick_2hit BITMAP "../prison/gfx/brick_2hit.bmp"
+idb_brick_3hit BITMAP "../prison/gfx/brick_3hit.bmp"
+idb_brick_4hit BITMAP "../prison/gfx/brick_4hit.bmp"
+idb_brick_unbreakable0 BITMAP "../prison/gfx/brick_unbreakable0_color.bmp"
+idb_brick_bonus0 BITMAP "../prison/gfx/brick_bonus0.bmp"
+idb_brick_bomb BITMAP "../prison/gfx/brick_bomb_color.bmp"
+idb_brick_jewel BITMAP "../prison/gfx/brick_jewel.bmp"
+idb_brick_accel BITMAP "../prison/gfx/brick_accel.bmp"
+idb_brick_tophit BITMAP "../prison/gfx/brick_tophit.bmp"
+idb_brick_attract0 BITMAP "../prison/gfx/brick_attract0_color.bmp"
+idb_brick_attract2 BITMAP "../prison/gfx/brick_attract2_color.bmp"
+idb_brick_teleport0 BITMAP "../prison/gfx/brick_teleport0_color.bmp"
+idb_brick_regen BITMAP "../prison/gfx/brick_regen.bmp"
