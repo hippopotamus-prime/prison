@@ -46,11 +46,11 @@ The settings menu is accessible from the title screen or by the in-game
 menu. The controls for sound volume and the keys should be fairly
 self-explanatory. As for the rest:
 
-Setting | About
-------- | -----
+Setting | Description
+------- | -----------
 **Difficulty** | Controls the speed of the ball in-game, as well as the scoring. Nightmare difficulty also adds gravity. The setting only takes effect when starting a new game.
 **Pen Control** | Determines how the game responds to pen taps in the display area (but not Graffiti).
-Autosave | If checked, any games in progress are saved when you exit the program and restored the next time the program is run.
+**Autosave** | If checked, any games in progress are saved when you exit the program and restored the next time the program is run.
 **Date High Scores** | If checked, the default name for high scores has the current date appended to it, if there is enough space for both the name and the date.
 **Background** | If checked, a background picture is tiled behind the bricks. (Color devices only.)
 **Compatibility Mode** | If checked, API calls are used to draw the game's graphics, instead of faster assembly routines. Generally, you should leave this off unless there are graphical errors. (This option is not present on hi-res and non-68k devices.)
