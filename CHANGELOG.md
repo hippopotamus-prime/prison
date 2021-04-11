@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.2 - 2021-04-11
+
+* Project uploaded to GitHub. References to the defunct Mobile Game Lab have
+been removed.
+* License updated to GPL v3.
+
 ## 1.9.1 - 2006-04-02
 
 ### Game Fixes

@@ -24,7 +24,7 @@
 #define objectFocus	1
 #define appFocus	2
 
-VERSION "1.9.1"
+VERSION "1.9.2"
 
 ICON
 BEGIN
@@ -290,7 +290,7 @@ FORM ID form_about AT (2 28 156 130)
 BEGIN
 	TITLE "About The Prison"
 	LABEL "The Prison" AUTOID AT (CENTER 16) FONT 1
-	LABEL "version 1.9.1" AUTOID AT (CENTER PREVTOP+11)
+	LABEL "version 1.9.2" AUTOID AT (CENTER PREVTOP+11)
 	LABEL "by Aaron Curtis" AUTOID AT (CENTER PREVTOP+14)
 	LABEL "For more information, visit" AUTOID AT (CENTER PREVTOP+14)
 	LABEL "github.com/hippopotamus-prime/prison" AUTOID AT (CENTER PREVTOP+11)
