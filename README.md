@@ -21,8 +21,10 @@ The color background graphics (gfx/bg[0-3]_color.bmp) are from public domain
 sources.
 
 ## System Requirements
-2-bit grayscale:  OS 3.0
-8-bit color:  OS 3.5 (and hardware capable of displaying color)
+Feature | System Requirements
+------- | -------------------
+2-bit grayscale | OS 3.0
+8-bit color | OS 3.5 (and hardware capable of displaying color)
 
 ## Controls
 By default, the controls are set up as follows:
