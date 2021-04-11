@@ -1,12 +1,12 @@
 # Changelog
 
-## [1.9.1] - 2006-04-02
+## 1.9.1 - 2006-04-02
 
 ### Game Fixes
 
 * Fixed divide by zero error when catching decelerate power-ups
 
-## [1.9] - 2006-04-01
+## 1.9 - 2006-04-01
 
 ### Game Fixes
 
@@ -19,25 +19,25 @@ nightmare mode, the ball could go fast enough to skip off the screen
 * Added file insertion commands
 * "Append" changed to "Insert After"
 
-## [1.8.7] - 2005-07-14
+## 1.8.7 - 2005-07-14
 
 ### Game Fixes
 
 * Disabling all the power-ups would cause a crash
 
-## [1.8.6] - 2005-01-13
+## 1.8.6 - 2005-01-13
 
 ### Game Fixes
 
 * Restored OS 3.0 compatibility (broken in 1.8.4)
 
-## [1.8.5] - 2005-01-08
+## 1.8.5 - 2005-01-08
 
 ### Editor Changes
 
 * Pris-Ed released under the GNU GPL
 
-## [1.8.4] - 2004-12-30
+## 1.8.4 - 2004-12-30
 
 ### Game Fixes
 
@@ -47,13 +47,13 @@ nightmare mode, the ball could go fast enough to skip off the screen
 
 * Prison released under the GNU GPL
 
-## [1.8.3] - 2004-08-27
+## 1.8.3 - 2004-08-27
 
 ### Game Fixes
 
 * The "board #" box should always disappear correctly now
 
-## [1.8.2] - 2004-07-06
+## 1.8.2 - 2004-07-06
 
 ### Game Fixes
 
@@ -61,14 +61,14 @@ nightmare mode, the ball could go fast enough to skip off the screen
 * The first ball released should always be at a fixed angle (this didn't happen
 before if you had several un-released balls)
 
-## [1.8.1] - 2004-05-29
+## 1.8.1 - 2004-05-29
 
 ### Game Fixes
 
 * Restored the aggressive key blocking from previous versions, but with an
 option on the keys form to turn it off
 
-## [1.8] - 2004-05-26
+## 1.8 - 2004-05-26
 
 ### New Game Features
 
@@ -82,7 +82,7 @@ balls is already in play
 * Added navigation resources for most forms
 * The boards form now shows the number of boards in a set
 
-## [1.7] - 2004-02-11
+## 1.7 - 2004-02-11
 
 ### New Game Features
 
@@ -100,7 +100,7 @@ balls is already in play
 
 * Web page is up - mobilegamelab.com
 
-## [1.6] - 2003-10-02
+## 1.6 - 2003-10-02
 
 ### New Game Features
 
@@ -118,7 +118,7 @@ balls is already in play
 * Fixed a bug with version checking for external boards (_**Warning**_ - New
 boards created with Pris-Ed can crash earlier versions)
 
-## [1.5.1] - 2003-08-16
+## 1.5.1 - 2003-08-16
 
 ### Game Fixes
 
@@ -128,7 +128,7 @@ boards created with Pris-Ed can crash earlier versions)
 
 * Exported boards should now have the right format internally
 
-## [1.5] - 2003-08-06
+## 1.5 - 2003-08-06
 
 ### New Game Features
 
@@ -146,7 +146,7 @@ boards created with Pris-Ed can crash earlier versions)
 
 * Removed the rather useless .bin option from the export dialog
 
-## [1.4] - 2003-05-28
+## 1.4 - 2003-05-28
 
 ### New Game Features
 
@@ -162,7 +162,7 @@ boards created with Pris-Ed can crash earlier versions)
 * Fixed a bug that allowed you to try to play deleted boards
 * Hopefully got rid of the occasional extrememly low-angle bounces
 
-## [1.3] - 2003-04-18
+## 1.3 - 2003-04-18
 
 ### New Game Features
 
@@ -174,7 +174,7 @@ boards created with Pris-Ed can crash earlier versions)
 
 * OS events are now generated for the correct keys
 
-## [1.2] - 2003-02-07
+## 1.2 - 2003-02-07
 
 ### New Game Features
 
@@ -186,7 +186,7 @@ boards created with Pris-Ed can crash earlier versions)
 * Tweaked the game timing a little
 * Using the settings form won't revert you to the internal boards now
 
-## [1.1] - 2003-01-18
+## 1.1 - 2003-01-18
 
 ### New Game Features
 
@@ -200,7 +200,7 @@ boards created with Pris-Ed can crash earlier versions)
 * Under some conditions the background was drawn to replace bricks that were
 hit, even though it was turned off
 
-## [1.0] - 2003-01-10
+## 1.0 - 2003-01-10
 
 ### New Editor Features
 
@@ -216,7 +216,7 @@ hit, even though it was turned off
 
 * Fixed odd-angled bounces when hitting the paddle's corners
 
-## [Beta Release 2] (limited)
+## Beta Release 2 (limited)
 
 ### New Game Features
 
@@ -234,7 +234,7 @@ hit, even though it was turned off
 * The paddle should always start in the same place now
 * Board db's are now closed properly when you win the game
 
-## [Beta Release 1] (limited)
+## Beta Release 1 (limited)
 
 * First release (_**Warning**_ - incompatible with the newer versions, delete
 this if upgrading)
