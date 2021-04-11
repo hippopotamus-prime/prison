@@ -10,7 +10,7 @@ or higher of The Prison.
 
 ## Free Software
 Pris-Ed is free software as described by the GNU General Public
-License (v2). See LICENSE for details.
+License (v3). See LICENSE.md in the top-level directory for details.
 
 ## Usage
 Essentially, Pris-Ed works like a paint program.  Left-clicking

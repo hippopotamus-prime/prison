@@ -15,7 +15,7 @@ need to hit the top border a few times.
 
 ## Free Software
 The Prison is free software as described by the GNU General Public
-License (v2). See LICENSE for details.
+License (v3). See LICENSE.md for details.
 
 The color background graphics (gfx/bg[0-3]_color.bmp) are from public domain
 sources.
