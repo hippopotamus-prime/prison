@@ -1,0 +1,956 @@
+/****************************************************************************
+** The Prison
+** Copyright 2004 Aaron Curtis
+** 
+** This file is part of The Prison.
+** 
+** The Prison is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** The Prison is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with The Prison; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+****************************************************************************/
+
+#include "rc.h"
+
+//HsCommon.h didn't like being included
+#define objectFocus	1
+#define appFocus	2
+
+VERSION "1.9.1"
+
+ICON
+BEGIN
+	BITMAP "gfx/icon.bmp" BPP 1
+	BITMAP "gfx/icon_color.bmp" BPP 8 TRANSPARENTINDEX 4
+END
+
+SMALLICONFAMILY "gfx/smallicon.bmp" "" "" "gfx/smallicon_color.bmp"
+
+ALERT ID alert_error
+	DEFAULTBUTTON 0
+	ERROR
+BEGIN
+	TITLE "Error!"
+	MESSAGE "Some error occurred while starting the game.  Most likely "\
+		"you're out of memory."
+	BUTTONS "OK"
+END
+
+ALERT ID alert_rconf
+	DEFAULTBUTTON 1
+	CONFIRMATION
+BEGIN
+	TITLE "Confirm Retire"
+	MESSAGE "Really quit this game?"
+	BUTTONS "Yes" "No"
+END
+
+ALERT ID alert_suiconf
+	DEFAULTBUTTON 1
+	CONFIRMATION
+BEGIN
+	TITLE "Confirm Suicide"
+	MESSAGE "Really end this life?"
+	BUTTONS "Yes" "No"
+END
+
+ALERT ID alert_failconvert
+	DEFAULTBUTTON 0
+	INFORMATION
+BEGIN
+	TITLE "Conversion Failed"
+	MESSAGE "You either have too many balls in play or no extra lives."
+	BUTTONS "OK"
+END
+
+FORM ID form_boards AT (2 2 156 156)
+	FRAME
+	USABLE
+	NOSAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_boardscancel
+BEGIN
+	TITLE "Boards..."
+	LIST "Internal Boards" ID list_boards
+		AT (8 20 140 65) USABLE
+
+	LABEL "Start Board..." AUTOID AT (8 STARTBOARDY)
+	BUTTON "+" ID button_boardsplus AT (92 PREVTOP 10 10)
+	BUTTON "-" ID button_boardsminus AT (138 PREVTOP 10 10)
+	LABEL "00000" ID label_startboard AT (STARTBOARDX PREVTOP)
+		NONUSABLE
+
+	LABEL "Boards In This Set:" AUTOID AT (8 98)
+	LABEL "00000" ID label_nboards AT (PREVRIGHT+4 PREVTOP)
+		NONUSABLE
+
+	CHECKBOX "Play Random Boards" ID checkbox_random AT (6 PREVBOTTOM+1 AUTO AUTO)
+		NONUSABLE
+
+	BUTTON "OK" ID button_boardsok AT (8 130 42 20)
+		USABLE
+		FRAME
+	BUTTON "Cancel" ID button_boardscancel AT (58 130 42 20)
+		USABLE
+		FRAME
+	BUTTON "Delete" ID button_boardsdelete AT (108 130 40 20)
+		USABLE
+		FRAME
+END
+
+NAVIGATION ID form_boards
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_boardsok
+	JUMPOBJECTID button_boardsok
+	BOTTOMLEFTOBJECTID button_boardsdelete
+NAVIGATIONMAP
+	ROW	list_boards
+	ROW button_boardsplus
+		button_boardsminus
+	ROW checkbox_random
+	ROW button_boardsok
+		button_boardscancel
+		button_boardsdelete
+END
+
+ALERT ID alert_boardsdelete
+	DEFAULTBUTTON 1
+	CONFIRMATION
+BEGIN
+	TITLE "Board Set Delete"
+	MESSAGE "Really delete this board set?"
+	BUTTONS "Yes" "No"
+END
+
+
+FORM ID form_keys AT (2 2 156 156)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_keyscancel
+BEGIN
+	TITLE "The Keys"
+	BUTTON "OK" ID button_keysok AT (24 104 50 20)
+		USABLE
+		FRAME
+	BUTTON "Cancel" ID button_keyscancel AT (82 104 50 20)
+		USABLE
+		FRAME
+	BUTTON "Set to Defaults" ID button_keysdefaults AT (24 130 108 20)
+		USABLE
+		FRAME
+
+	LIST "- None -" "Date Book" "Address" "To Do List" "Memo Pad" "Up" "Down"
+		ID list_keys AT (82 16 AUTO AUTO) VISIBLEITEMS 7 NONUSABLE
+
+	LIST "- None -" "Date Book" "Address" "To Do List" "Note Pad"
+		"Nav-Up" "Nav-Down" "Nav-Right" "Nav-Left" "Nav-Select"
+		ID list_altkeys AT (82 16 AUTO AUTO) VISIBLEITEMS 10 NONUSABLE
+
+	LABEL "Right" AUTOID AT (24 16)
+	POPUPTRIGGER "" ID popup_rightkey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_rightkey list_keys
+
+	LABEL "Fast Right" AUTOID AT (24 PREVTOP+11)
+	POPUPTRIGGER "" ID popup_frightkey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_frightkey list_keys
+
+	LABEL "Left" AUTOID AT (24 PREVTOP+11)
+	POPUPTRIGGER "" ID popup_leftkey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_leftkey list_keys
+
+	LABEL "Fast Left" AUTOID AT (24 PREVTOP+11)
+	POPUPTRIGGER "" ID popup_fleftkey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_fleftkey list_keys
+
+	LABEL "Release" AUTOID AT (24 PREVTOP+11)
+	POPUPTRIGGER "" ID popup_actionkey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_actionkey list_keys
+
+	LABEL "Pause" AUTOID AT (24 PREVTOP+11)
+	POPUPTRIGGER "" ID popup_pausekey AT (68 PREVTOP AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_pausekey list_keys
+
+	CHECKBOX "Allow Key Events" ID checkbox_kevents AT (22 PREVTOP+13 AUTO AUTO)
+		NONUSABLE
+END
+
+NAVIGATION ID form_keys
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_keysok
+	JUMPOBJECTID button_keysok
+	BOTTOMLEFTOBJECTID button_keysdefaults
+NAVIGATIONMAP
+	ROW	popup_rightkey
+	ROW popup_frightkey
+	ROW popup_leftkey
+	ROW popup_fleftkey
+	ROW popup_actionkey
+	ROW popup_pausekey
+	ROW checkbox_kevents
+	ROW button_keysok
+		button_keyscancel
+	ROW	button_keysdefaults
+END
+
+
+
+FORM ID form_settings AT (2 2 156 156)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_settingscancel
+BEGIN
+	TITLE "The Settings"
+	BUTTON "OK" ID button_settingsok AT (8 130 42 20)
+		USABLE
+		FRAME
+	BUTTON "Cancel" ID button_settingscancel AT (58 130 42 20)
+		USABLE
+		FRAME
+	BUTTON "Keys" ID button_settingskeys AT (108 130 40 20)
+		USABLE
+		FRAME
+
+	LIST "System Setting" "Off" "Low" "Medium" "High"
+		ID list_volume AT (80 16 AUTO AUTO) VISIBLEITEMS 5 NONUSABLE
+	LABEL "Sound Volume" AUTOID AT (8 16)
+	POPUPTRIGGER "" ID popup_volume AT (66 16 AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_volume list_volume
+
+	LIST "Easy" "Normal" "Hard" "Nightmare"
+		ID list_diffs AT (80 28 AUTO AUTO) VISIBLEITEMS 4 NONUSABLE
+	LABEL "Difficulty" AUTOID AT (8 28)
+	POPUPTRIGGER "" ID popup_diffs AT (66 28 AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_diffs list_diffs
+
+	LIST "Movement" "Release" "Pause" "Off"
+		ID list_pen AT (80 40 AUTO AUTO) VISIBLEITEMS 4 NONUSABLE
+	LABEL "Pen Control" AUTOID AT (8 40)
+	POPUPTRIGGER "" ID popup_pen AT (66 40 AUTO AUTO)
+		LEFTANCHOR
+	POPUPLIST ID popup_pen list_pen
+
+	CHECKBOX "Autosave" ID checkbox_autosave AT (6 54 AUTO AUTO)
+	CHECKBOX "Confirm Retire / Suicide" ID checkbox_rconf AT (6 66 AUTO AUTO)
+	CHECKBOX "Date High Scores" ID checkbox_datehs AT (6 78 AUTO AUTO)
+
+	/* the following have their coordinates adjusted dynamically */
+    CHECKBOX "Background" ID checkbox_background AT (6 90 AUTO AUTO) NONUSABLE
+    CHECKBOX "Compatibility Mode" ID checkbox_compat AT (6 90 AUTO AUTO) NONUSABLE
+    CHECKBOX "Graffiti Control" ID checkbox_graf AT (6 90 AUTO AUTO) NONUSABLE
+END
+
+NAVIGATION ID form_settings
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_settingsok
+	JUMPOBJECTID button_settingsok
+	BOTTOMLEFTOBJECTID button_settingskeys
+NAVIGATIONMAP
+	ROW	popup_volume
+	ROW popup_diffs
+	ROW popup_pen
+	ROW checkbox_autosave
+	ROW checkbox_rconf
+	ROW checkbox_datehs
+	ROW checkbox_background
+	ROW checkbox_graf
+	ROW checkbox_compat
+	ROW button_settingsok
+		button_settingscancel
+		button_settingskeys
+END
+
+
+
+FORM ID form_about AT (2 28 156 130)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_aboutdone
+BEGIN
+	TITLE "About The Prison"
+	LABEL "The Prison" AUTOID AT (CENTER 16) FONT 1
+	LABEL "version 1.9.1" AUTOID AT (CENTER PREVTOP+11)
+	LABEL "by Aaron Curtis" AUTOID AT (CENTER PREVTOP+14)
+	LABEL "For more information, visit" AUTOID AT (CENTER PREVTOP+14)
+	LABEL "github.com/hippopotamus-prime/prison" AUTOID AT (CENTER PREVTOP+11)
+	BUTTON "Done" ID button_brickdone AT (CENTER PREVTOP+16 40 20)
+		USABLE
+		FRAME
+END
+
+
+FORM ID form_brickinfo AT (2 2 156 156)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_brickdone
+BEGIN
+	TITLE "Brick Info"
+	FORMBITMAP AT (6 16) BITMAP bmp_brick_plain
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_2hit
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_3hit
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_4hit
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_bonus0
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_jewel
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_accel
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_tophit
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_regen
+
+	LABEL "Plain" AUTOID AT (28 14)
+	LABEL "Two-Hit" AUTOID AT (28 PREVTOP+11)
+	LABEL "Three-Hit" AUTOID AT (28 PREVTOP+11)
+	LABEL "Four-Hit" AUTOID AT (28 PREVTOP+11)
+	LABEL "Bonus" AUTOID AT (28 PREVTOP+11)
+	LABEL "Points" AUTOID AT (28 PREVTOP+11)
+	LABEL "Accelerate" AUTOID AT (28 PREVTOP+11)
+	LABEL "Top-Hit" AUTOID AT (28 PREVTOP+11)
+	LABEL "Regenerative" AUTOID AT (28 PREVTOP+11)
+
+	BUTTON "Done" ID button_brickdone AT (6 130 40 20)
+		USABLE
+		FRAME
+	BUTTON "More" ID button_brickmore AT (54 130 40 20)
+		USABLE
+		FRAME
+	BUTTON "Bonus Info" ID button_brickboni AT (102 130 48 20)
+		USABLE
+		FRAME
+END
+
+NAVIGATION ID form_brickinfo
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_brickdone
+	JUMPOBJECTID button_brickdone
+	BOTTOMLEFTOBJECTID button_brickboni
+NAVIGATIONMAP
+	ROW	button_brickdone
+		button_brickmore
+		button_brickboni
+END
+
+
+FORM ID form_brickinfo2 AT (2 2 156 156)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_brickdone
+BEGIN
+	TITLE "Brick Info"
+
+	FORMBITMAP AT (6 15) BITMAP bmp_brick_unbreakable0
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_bomb
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_attract0
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_attract2
+	FORMBITMAP AT (6 PREVTOP+11) BITMAP bmp_brick_teleport0
+
+	LABEL "Unbreakable" AUTOID AT (28 13)
+	LABEL "Bomb" AUTOID AT (28 PREVTOP+11)
+	LABEL "Magnet (attract)" AUTOID AT (28 PREVTOP+11)
+	LABEL "Magnet (repel)" AUTOID AT (28 PREVTOP+11)
+	LABEL "Teleport" AUTOID AT (28 PREVTOP+11)
+
+	BUTTON "Done" ID button_brickdone AT (6 130 40 20)
+		USABLE
+		FRAME
+	BUTTON "More" ID button_brickmore2 AT (54 130 40 20)
+		USABLE
+		FRAME
+	BUTTON "Bonus Info" ID button_brickboni AT (102 130 48 20)
+		USABLE
+		FRAME
+END
+
+NAVIGATION ID form_brickinfo2
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_brickdone
+	JUMPOBJECTID button_brickdone
+	BOTTOMLEFTOBJECTID button_brickboni
+NAVIGATIONMAP
+	ROW	button_brickdone
+		button_brickmore
+		button_brickboni
+END
+
+
+FORM ID form_bonusinfo AT (2 2 156 156)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_bonidone
+BEGIN
+	TITLE "Bonus Info"
+/*
+	FORMBITMAP AT (6 16) BITMAP bmp_bonus_50point
+	FORMBITMAP AT (6 PREVTOP+16) BITMAP bmp_bonus_decel
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_clone
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_through
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_enlarge
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_extralife
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_extrapoint
+	FORMBITMAP AT (6 PREVBOTTOM+4) BITMAP bmp_bonus_charge
+*/
+	LABEL "50 Points" AUTOID AT (28 18)
+	LABEL "Decelerate" AUTOID AT (80 PREVTOP+12)
+	LABEL "Clone" AUTOID AT (28 PREVTOP+12)
+	LABEL "Permeate" AUTOID AT (84 PREVTOP+12)
+	LABEL "Enlarge Paddle" AUTOID AT (28 PREVTOP+12)
+	LABEL "Extra Life" AUTOID AT (84 PREVTOP+12)
+	LABEL "Extra Points" AUTOID AT (28 PREVTOP+12)
+	LABEL "Detonate" AUTOID AT (86 PREVTOP+12)
+
+	BUTTON "Done" ID button_bonidone AT (6 130 40 20)
+		USABLE
+		FRAME
+	BUTTON "Brick Info" ID button_bonibricks AT (54 130 48 20)
+		USABLE
+		FRAME
+END
+
+NAVIGATION ID form_bonusinfo
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_bonidone
+	JUMPOBJECTID button_bonidone
+	BOTTOMLEFTOBJECTID button_bonibricks
+NAVIGATIONMAP
+	ROW	button_bonidone
+		button_bonibricks
+END
+
+
+
+FORM ID form_pause AT (30 47 100 66)
+	FRAME
+	USABLE
+	SAVEBEHIND
+	MODAL
+	DEFAULTBTNID button_pauseresume
+	MENUID menu_pause
+BEGIN
+	LABEL "Game Paused" AUTOID AT (CENTER 6) FONT 2
+	LABEL "Board 00000" ID label_pauseboard AT (CENTER PREVBOTTOM) NONUSABLE
+	BUTTON "Resume" ID button_pauseresume AT (CENTER PREVBOTTOM+4 50 20)
+		USABLE FRAME
+END
+
+FORM ID form_loading AT (0 0 160 160)
+	NOFRAME
+	NOSAVEBEHIND
+BEGIN
+	LABEL "Loading..." AUTOID AT (0 0)
+END
+
+FORM ID form_restoring AT (0 0 160 160)
+  NOFRAME
+  NOSAVEBEHIND
+BEGIN
+  LABEL "Restoring the previous game..." AUTOID AT (0 0)
+END
+
+FORM ID form_wingamehigh AT (18 20 124 116)
+  FRAME
+  USABLE
+  SAVEBEHIND
+  MODAL
+  DEFAULTBTNID button_highscorecancel
+BEGIN
+  LABEL "Escape!" AUTOID AT (CENTER 6)
+    FONT 2
+  LABEL "You have finished" AUTOID AT (CENTER 26)
+  LABEL "the final level." AUTOID AT (CENTER 36)
+  LABEL "And you have a high score!" AUTOID AT (CENTER 48)
+  LABEL "Enter your name..." AUTOID AT (CENTER 58)
+  FIELD ID field_highscore AT (CENTER 70 96 14)
+    MAXCHARS 16
+    USABLE
+    LEFTALIGN
+    UNDERLINED
+    EDITABLE
+    SINGLELINE
+  BUTTON "Ok" ID button_highscoreok AT (18 88 34 20)
+    USABLE
+    FRAME
+	BUTTON "Cancel" ID button_highscorecancel AT (66 88 34 20)
+		USABLE
+		FRAME
+	GRAFFITISTATEINDICATOR AT (114 2)
+END
+
+NAVIGATION ID form_wingamehigh
+	INITIALSTATE objectFocus
+	INITIALOBJECTID field_highscore
+	JUMPOBJECTID button_highscoreok
+	BOTTOMLEFTOBJECTID button_highscorecancel
+NAVIGATIONMAP
+	ROW field_highscore
+	ROW	button_highscoreok
+		button_highscorecancel
+END
+
+
+FORM ID form_wingame AT (28 50 104 62)
+  FRAME
+  USABLE
+  SAVEBEHIND
+  MODAL
+BEGIN
+  LABEL "Escape!" AUTOID AT (CENTER 6)
+    FONT 2
+  LABEL "You have finished" AUTOID AT (CENTER 26)
+  LABEL "the final level." AUTOID AT (CENTER 36)
+  LABEL "Tap to continue..." AUTOID AT (CENTER 48)
+END
+
+FORM ID form_gameoverhigh AT (28 30 104 94)
+  FRAME
+  USABLE
+  SAVEBEHIND
+  MODAL
+  DEFAULTBTNID button_highscorecancel
+BEGIN
+  LABEL "Game Over!" AUTOID AT (CENTER 6)
+    FONT 2
+  LABEL "You have a high score!" AUTOID AT (CENTER 25)
+  LABEL "Enter your name..." AUTOID AT (CENTER 36)
+  FIELD ID field_highscore AT (CENTER 48 96 14)
+    MAXCHARS 16
+    USABLE
+    LEFTALIGN
+    UNDERLINED
+    EDITABLE
+    SINGLELINE
+  BUTTON "Ok" ID button_highscoreok AT (12 66 34 20)
+    USABLE
+    FRAME
+  BUTTON "Cancel" ID button_highscorecancel AT (58 66 34 20)
+    USABLE
+    FRAME
+	GRAFFITISTATEINDICATOR AT (94 2)
+END
+
+NAVIGATION ID form_gameoverhigh
+	INITIALSTATE objectFocus
+	INITIALOBJECTID field_highscore
+	JUMPOBJECTID button_highscoreok
+	BOTTOMLEFTOBJECTID button_highscorecancel
+NAVIGATIONMAP
+	ROW field_highscore
+	ROW	button_highscoreok
+		button_highscorecancel
+END
+
+
+FORM ID form_gameover AT (28 60 104 40)
+  FRAME
+  USABLE
+  SAVEBEHIND
+  MODAL
+BEGIN
+  LABEL "Game Over!" AUTOID AT (CENTER 6)
+    FONT 2
+  LABEL "Tap to continue..." AUTOID AT (CENTER 26)
+END
+
+FORM ID form_highscores AT (2 2 156 156)
+  FRAME
+  USABLE
+  NOSAVEBEHIND
+	MODAL
+BEGIN
+  TITLE "Ten stand above all others..."
+  LABEL "Tap anywhere to exit." AUTOID AT (CENTER 145)
+END
+
+FORM ID form_main AT (0 0 160 160)
+  NOFRAME
+  USABLE
+  NOSAVEBEHIND
+  MENUID menu_main
+BEGIN
+  TITLE "The Prison"
+END
+
+FORM ID form_title AT (0 0 160 160)
+	NOFRAME
+	USABLE
+	NOSAVEBEHIND
+	MENUID menu_title
+BEGIN
+	FORMBITMAP AT (5 15) BITMAP bmp_title
+	BUTTON "Start!" ID button_titlestart AT (CENTER 60 60 20)
+		USABLE
+		FRAME
+	BUTTON "High Scores" ID button_titlehs AT (CENTER 85 60 20)
+		USABLE
+		FRAME
+	BUTTON "Settings" ID button_titlesettings AT (CENTER 110 60 20)
+		USABLE
+		FRAME
+	BUTTON "Boards" ID button_titleboards AT (CENTER 135 60 20)
+		USABLE
+		FRAME
+END
+
+NAVIGATION ID form_title
+	INITIALSTATE objectFocus
+	INITIALOBJECTID button_titlestart
+	JUMPOBJECTID button_titlestart
+	BOTTOMLEFTOBJECTID button_titleboards
+NAVIGATIONMAP
+	ROW button_titlestart
+	ROW button_titlehs
+	ROW button_titlesettings
+	ROW button_titleboards
+END
+
+
+MENU ID menu_main
+BEGIN
+	PULLDOWN "Game"
+	BEGIN
+		MENUITEM "Pause"		ID menuitem_pause		"P"
+		MENUITEM "Retire"		ID menuitem_retire		"R"
+		MENUITEM "Suicide"		ID menuitem_suicide		"C"
+		MENUITEM "Convert Life"	ID menuitem_convert		"L"
+		MENUITEM "Settings..."	ID menuitem_settings	"S"
+		MENUITEM SEPARATOR
+		MENUITEM "Quit Game"	ID menuitem_quit		"Q"
+	END
+	PULLDOWN "Info"
+	BEGIN
+		MENUITEM "Bonus Info"	ID menuitem_bonusinfo	"B"
+		MENUITEM "Brick Info"	ID menuitem_brickinfo	"K"
+		MENUITEM SEPARATOR
+		MENUITEM "About"		ID menuitem_about		"A"
+	END
+END
+
+MENU ID menu_pause
+BEGIN
+	PULLDOWN "Game"
+	BEGIN
+		MENUITEM "Resume"		ID menuitem_resume		"P"
+		MENUITEM "Retire"		ID menuitem_retire		"R"
+		MENUITEM "Suicide"		ID menuitem_suicide		"C"
+		MENUITEM "Convert Life"	ID menuitem_convert		"L"
+		MENUITEM "Settings..."	ID menuitem_settings	"S"
+		MENUITEM SEPARATOR
+		MENUITEM "Quit Game"	ID menuitem_quit		"Q"
+	END
+	PULLDOWN "Info"
+	BEGIN
+		MENUITEM "Bonus Info"	ID menuitem_bonusinfo	"B"
+		MENUITEM "Brick Info"	ID menuitem_brickinfo	"K"
+		MENUITEM SEPARATOR
+		MENUITEM "About"		ID menuitem_about		"A"
+	END
+END
+
+MENU ID menu_title
+BEGIN
+	PULLDOWN "Game"
+	BEGIN
+		MENUITEM "Start Game"		ID menuitem_start		"G"
+		MENUITEM "High Scores..."	ID menuitem_scores		"H"
+		MENUITEM "Settings..."		ID menuitem_settings	"S"
+		MENUITEM "Boards..."		ID menuitem_boards		"O"
+		MENUITEM SEPARATOR
+		MENUITEM "Quit Game" 		ID menuitem_quit		"Q"
+	END
+	PULLDOWN "Info"
+	BEGIN
+		MENUITEM "Bonus Info"		ID menuitem_bonusinfo	"B"
+		MENUITEM "Brick Info"		ID menuitem_brickinfo	"K"
+		MENUITEM SEPARATOR
+		MENUITEM "About"			ID menuitem_about		"A"
+	END
+END
+
+BITMAPFAMILY ID bmp_guyform0 "" "gfx/guyform0.bmp" ""
+	"gfx/guyform0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guyform1 "" "gfx/guyform1.bmp" ""
+	"gfx/guyform1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guyform2 "" "gfx/guyform2.bmp" ""
+	"gfx/guyform2_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guyform3 "" "gfx/guyform3.bmp" ""
+	"gfx/guyform3_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guyform4 "" "gfx/guyform4.bmp" ""
+	"gfx/guyform4_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guyform5 "" "gfx/guyform5.bmp" ""
+	"gfx/guyform5_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy0 "" "gfx/newguy0.bmp" ""
+	"gfx/newguy0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy1 "" "gfx/newguy1.bmp" ""
+	"gfx/newguy1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy2 "" "gfx/newguy2.bmp" ""
+	"gfx/newguy2_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy3 "" "gfx/newguy3.bmp" ""
+	"gfx/newguy3_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy4 "" "gfx/newguy4.bmp" ""
+	"gfx/newguy4_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy5 "" "gfx/newguy5.bmp" ""
+	"gfx/newguy5_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy6 "" "gfx/newguy6.bmp" ""
+	"gfx/newguy6_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_guy7 "" "gfx/newguy7.bmp" ""
+	"gfx/newguy7_color.bmp" COMPRESS
+BITMAP ID bmp_guymask "gfx/guymask.bmp" COMPRESS
+
+BITMAPFAMILY ID bmp_paddleright "" "gfx/paddleright.bmp" ""
+	"gfx/paddleright_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_paddleleft "" "gfx/paddleleft.bmp" ""
+	"gfx/paddleleft_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_paddlemid "" "gfx/paddlemid.bmp" ""
+	"gfx/paddlemid_color.bmp" COMPRESS
+BITMAP ID bmp_paddleright_mask "gfx/paddleright_mask.bmp" COMPRESS
+BITMAP ID bmp_paddleleft_mask "gfx/paddleleft_mask.bmp" COMPRESS
+
+BITMAPFAMILY ID bmp_border_side "" "gfx/border_side.bmp" ""
+	"gfx/border_side_color.bmp" COMPRESS
+
+BITMAPGREY ID bmp_brick_plain "gfx/brick_plain.bmp" COMPRESS
+BITMAPGREY ID bmp_brick_2hit "gfx/brick_2hit.bmp" COMPRESS
+BITMAPGREY ID bmp_brick_3hit "gfx/brick_3hit.bmp" COMPRESS
+BITMAPGREY ID bmp_brick_4hit "gfx/brick_4hit.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_unbreakable0 "" "gfx/brick_unbreakable0.bmp" ""
+	"gfx/brick_unbreakable0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_unbreakable1 "" "gfx/brick_unbreakable1.bmp" ""
+	"gfx/brick_unbreakable1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_unbreakable2 "" "gfx/brick_unbreakable2.bmp" ""
+	"gfx/brick_unbreakable2_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_unbreakable3 "" "gfx/brick_unbreakable3.bmp" ""
+	"gfx/brick_unbreakable3_color.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_bonus0 "gfx/brick_bonus0.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_bonus1 "gfx/brick_bonus1.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_bonus2 "gfx/brick_bonus2.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_bonus3 "gfx/brick_bonus3.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_bomb "" "gfx/brick_bomb.bmp" ""
+	"gfx/brick_bomb_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_explode0 "" "gfx/brick_explode0.bmp" ""
+	"gfx/brick_explode0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_explode1 "" "gfx/brick_explode1.bmp" ""
+	"gfx/brick_explode1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_explode2 "" "gfx/brick_explode2.bmp" ""
+	"gfx/brick_explode2_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_explode3 "" "gfx/brick_explode3.bmp" ""
+	"gfx/brick_explode3_color.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_jewel "gfx/brick_jewel.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_accel "gfx/brick_accel.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_attract0 "" "gfx/brick_attract0.bmp" ""
+	"gfx/brick_attract0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_attract1 "" "gfx/brick_attract1.bmp" ""
+	"gfx/brick_attract1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_attract2 "" "gfx/brick_attract2.bmp" ""
+	"gfx/brick_attract2_color.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_tophit "gfx/brick_tophit.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_teleport0 "" "gfx/brick_teleport0.bmp" ""
+	"gfx/brick_teleport0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_teleport1 "" "gfx/brick_teleport1.bmp" ""
+	"gfx/brick_teleport1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_brick_teleport2 "" "gfx/brick_teleport2.bmp" ""
+	"gfx/brick_teleport2_color.bmp" COMPRESS
+BITMAPGRAY ID bmp_brick_regen "gfx/brick_regen.bmp" COMPRESS
+
+BITMAP ID bmp_brickmask_jewel "gfx/brickmask_jewel.bmp" COMPRESS
+
+BITMAPGRAY ID bmp_bonus_50point "gfx/bonus_50point.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_decel "gfx/bonus_decel.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_clone "gfx/bonus_clone.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_through "gfx/bonus_through.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_enlarge "gfx/bonus_enlarge.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_extralife "gfx/bonus_extralife.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_extrapoint "gfx/bonus_extrapoint.bmp" COMPRESS
+BITMAPGRAY ID bmp_bonus_charge "gfx/bonus_charge.bmp" COMPRESS
+
+BITMAPFAMILY ID bmp_bonusframe0 "" "gfx/bonusframe0.bmp" ""
+	"gfx/bonusframe0_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_bonusframe1 "" "gfx/bonusframe1.bmp" ""
+	"gfx/bonusframe1_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_bonusframe2 "" "gfx/bonusframe2.bmp" ""
+	"gfx/bonusframe2_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_bonusframe3 "" "gfx/bonusframe3.bmp" ""
+	"gfx/bonusframe3_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_bonusframe4 "" "gfx/bonusframe4.bmp" ""
+	"gfx/bonusframe4_color.bmp" COMPRESS
+BITMAPFAMILY ID bmp_bonusframe5 "" "gfx/bonusframe5.bmp" ""
+	"gfx/bonusframe5_color.bmp" COMPRESS
+
+BITMAPCOLOR	ID bmp_bg0 "gfx/bg0_color.bmp" COMPRESS
+BITMAPCOLOR	ID bmp_bg1 "gfx/bg1_color.bmp" COMPRESS
+BITMAPCOLOR	ID bmp_bg2 "gfx/bg2_color.bmp" COMPRESS
+BITMAPCOLOR	ID bmp_bg3 "gfx/bg3_color.bmp" COMPRESS
+
+BITMAP ID bmp_title COMPRESS
+BEGIN
+	BITMAP "gfx/title.bmp" BPP 2
+	BITMAP "gfx/title_color.bmp" BPP 8 TRANSPARENTINDEX 0
+END
+
+
+DATA "PRBO" ID boardset0 "boards/reg_boards.pbd"
+
+HEX "PSND" ID sound_regen
+	3 6
+	4 64		0 90	0 0
+	4 0			0 20	255 254
+	4 64		0 90	0 0
+	4 0			0 20	255 254
+	4 64		0 90	0 0
+	4 0			0 20	255 254
+
+HEX "PSND" ID sound_teleport
+	2 6
+	4 196		0 40	0 0
+	5 0			0 40	0 0
+	5 64		0 100	0 0
+	4 128		0 40	255 255
+	4 196		0 40	255 255
+	5 0			0 120	255 255
+
+HEX "PSND" ID sound_hitplain
+	0 1
+	3 150		0 100	0 0
+
+HEX "PSND" ID sound_hitside
+	0 1
+	4 0			0 90	0 0
+
+HEX "PSND" ID sound_hitbonus
+	1 2
+	4 0			0 50	0 0
+	5 0			0 140	0 0
+
+HEX "PSND" ID sound_hitborder
+	2 4
+	5 0			0 40	0 0
+	4 128		0 50	255 255
+	4 0			0 50	255 254
+	3 128		0 90	255 253
+
+HEX "PSND" ID sound_hitpaddle
+	1 3
+	3 200		0 30	0 0
+	4 100		0 30	0 0
+	3 200		0 60	0 0
+
+HEX "PSND" ID sound_accelerate
+	3 5
+	2 128		0 100	255 255
+	2 0			0 20	255 240
+	3 0			0 100	255 255
+	2 0			0 20	255 240
+	3 128		0 120	0 0
+
+HEX "PSND" ID sound_hitmagnet
+	1 6
+	4 0			0 25	0 0
+	3 128		0 30	0 0
+	3 0			0 35	255 255
+	2 192		0 40	255 254
+	2 128		0 45	255 253
+	2 64		0 50	255 252
+
+HEX "PSND" ID sound_hitjewel
+	0 8
+	4 128		0 30	0 0
+	5 128		0 20	0 0
+	4 128		0 35	0 0
+	5 128		0 70	255 255
+
+HEX "PSND" ID sound_boom
+	3 8
+	1 128		0 30	0 3
+	1 64		0 25	0 2
+	1 192		0 20	0 1
+	1 128		0 35	0 0
+	1 64		0 30	0 0
+	1 192		0 25	0 0
+	1 128		0 40	0 0
+	1 64		0 35	0 0
+
+HEX "PSND" ID sound_bang
+	2 3
+	1 128		0 25	0 0
+	1 0			0 30	0 0
+	1 128		0 30	255 255
+
+HEX "PSND" ID sound_collect
+	2 4
+	4 0			0 40	0 0
+	5 0			0 110	0 0
+	0 0			0 10	255 128
+	5 128		0 130	255 254
+
+HEX "PSND" ID sound_die
+	3 3
+	1 128		0 200	0 0
+	1 64		0 200	0 0
+	1 0			1 110	0 0
+
+HEX "PSND" ID sound_escape
+	3 5
+	2 128		0 100	0 0
+	2 0			0 200	0 0
+	2 128		0 120	0 0
+	2 0			0 220	0 0
+	3 0			1 4		0 0
+
+HEX "PSND" ID sound_extralife
+	4 4
+	2 0			0 100	0 0
+	2 128		0 60	0 0
+	3 0			0 60	0 0
+	2 0			0 130	0 0
+
+HEX "PSND" ID sound_break
+	3 6
+	0 192		0 50	0 3
+	1 0			0 30	0 2
+	1 64		0 30	0 1
+	1 128		0 60	0 0
+	1 0			0 20	0 0
+	1 64		0 30	255 254
+
+
+HEX "PMSK" ID masklist_bricks
+	0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+	0x00 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+
+
+HEX "PPAL" ID palette_bricks
+	0x66 0x33 0x33		0x99 0x66 0x66		0xcc 0x99 0x99		0xff 0xcc 0xcc
+	0x33 0x00 0x00 		0x66 0x00 0x00		0x99 0x33 0x33		0xcc 0x66 0x66
+	0x33 0x66 0x33		0x66 0x99 0x66		0x99 0xcc 0x99		0xcc 0xff 0xcc
+	0x00 0x33 0x00		0x00 0x66 0x00		0x33 0x99 0x33		0x66 0xcc 0x66
+	0x33 0x33 0x66		0x66 0x66 0x99		0x99 0x99 0xcc		0xcc 0xcc 0xff
+	0x00 0x00 0x33		0x00 0x00 0x66		0x33 0x33 0x99		0x66 0x66 0xcc
+	0x33 0x66 0x66		0x66 0x99 0x99		0x99 0xcc 0xcc		0xcc 0xff 0xff
+	0x00 0x33 0x33		0x00 0x66 0x66		0x33 0x99 0x99		0x66 0xcc 0xcc
+	0x66 0x33 0x66		0x99 0x66 0x99		0xcc 0x99 0xcc		0xff 0xcc 0xff
+	0x33 0x00 0x33		0x66 0x00 0x66		0x99 0x33 0x99		0xcc 0x66 0xcc
+	0x66 0x66 0x33		0x99 0x99 0x66		0xcc 0xcc 0x99		0xff 0xff 0xcc
+	0x33 0x33 0x00		0x66 0x66 0x00		0x99 0x99 0x33		0xcc 0xcc 0x66
