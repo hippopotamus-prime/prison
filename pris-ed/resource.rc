@@ -106,10 +106,8 @@ BEGIN
 	DEFPUSHBUTTON "&OK", IDOK, 50, 100, 100, 16
 	GROUPBOX "Pris-Ed - The Prison Editor", -1, 5, 5, 190, 85
 	CTEXT "Create boards for The Prison for PalmOS devices.\r\n\r\n" \
-		"Send comments to Aaron Curtis:\r\n" \
-		"aaron@mobilegamelab.com\r\n\r\n" \
 		"For more information, visit:\r\n" \
-		"www.mobilegamelab.com",
+		"github.com/hippopotamus-prime/prison",
 		-1, 10, 20, 180, 60
 END
 
