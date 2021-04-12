@@ -63,7 +63,10 @@ Setting | Description
 **Graffiti Control** | If checked, the game will respond to pen input in the Graffiti area, by moving the paddle. (Not present if the game can't figure out where the Graffiti area is, and even if it can, it probably won't be in exactly the right place.)
 
 ## Building
-Compilation requires [PRC Tools](http://prc-tools.sourceforge.net/).
+The game was originally developed with [PRC Tools](http://prc-tools.sourceforge.net/), which
+unfortunately has not been maintained for modern operating systems. An easy alternative to build
+it is to use [prc-tools-remix](https://github.com/jichu4n/prc-tools-remix). The project offers pre-built
+binaries for 64-bit Ubuntu/Debian systems and a convenient setup script to install the Palm SDK.
 
 Run `make all` to build prison.prc, then transfer it to a PalmOS device
 or the [Palm OS Emulator](https://sourceforge.net/projects/pose/).
